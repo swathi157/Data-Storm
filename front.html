@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataQueryAI</title>
+</head>
+<body>
+    <div style="background-image: 'https://www.freepik.com/free-vector/hand-drawn-people-asking-questions-illustration_13297321.htm#fromView=search&page=1&position=7&uuid=4ab24264-3abf-4c7d-8966-5aee7da212fb&query=queries';">
+    <h1 style="text-align: center;">DataQueryAI</h1>
+
+    <!-- File Upload -->
+    <form id="uploadForm">
+        <h2>Upload CSV File</h2>
+        <input type="file" name="file" id="fileInput" accept=".csv">
+        <input type="text" name="user_id" placeholder="User ID" required>
+        <button type="submit">Upload</button>
+    </form>
+
+    <!-- Query Input -->
+    <form id="queryForm">
+        <h2>Ask a Question</h2>
+        <input type="text" name="user_id" placeholder="User ID" required>
+        <textarea name="query" placeholder="Enter your query" required></textarea>
+        <button type="submit">Submit</button>
+    </form>
+
+    <!-- Results -->
+    <h2>Results</h2>
+    <pre id="results"></pre>
+
+    <script>
+        // Handle file upload
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('file', document.getElementById('fileInput').files[0]);
+            formData.append('user_id', e.target.user_id.value);
+
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            document.getElementById('results').textContent = JSON.stringify(result, null, 2);
+        });
+
+        // Handle query submission
+        document.getElementById('queryForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const response = await fetch('/query', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: e.target.user_id.value,
+                    query: e.target.query.value
+                })
+            });
+            const result = await response.json();
+            document.getElementById('results').textContent = JSON.stringify(result, null, 2);
+        });
+    </script></div>
+</body>
+</html>
